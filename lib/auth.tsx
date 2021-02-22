@@ -1,9 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createUser } from './db';
 import firebase from './firebase';
 
 export interface IUser {
+	uid: string;
 	username: string;
 	email: string;
+	photoUrl: string;
 }
 
 interface Context {
@@ -11,6 +14,15 @@ interface Context {
 	loading: boolean;
 	signinWithGithub: () => Promise<void>;
 	signout: () => Promise<void>;
+}
+
+function formatUser(user: firebase.User): IUser {
+	return {
+		uid: user.uid,
+		email: user.email,
+		username: user.displayName,
+		photoUrl: user.photoURL,
+	};
 }
 
 const AuthContext = createContext<Context | undefined>(undefined);
@@ -26,18 +38,24 @@ export function useAuth() {
 }
 
 const AuthProvider: React.FC = ({ children }) => {
-	const [user, setUser] = useState(undefined);
+	const [user, setUser] = useState<IUser | undefined>(undefined);
 	const [loading, setLoading] = useState(true);
 
+	const handlUser = async (rawUser: firebase.User | undefined) => {
+		if (rawUser) {
+			const user = formatUser(rawUser);
+			await createUser(user.uid, user);
+
+			setUser(user);
+			setLoading(false);
+		} else {
+			setLoading(false);
+			setUser(undefined);
+		}
+	};
+
 	useEffect(() => {
-		const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-				setUser(user);
-				setLoading(false);
-			} else {
-				setUser(undefined);
-			}
-		});
+		const unsubscribe = firebase.auth().onAuthStateChanged(handlUser);
 
 		return () => unsubscribe();
 	});
@@ -50,7 +68,7 @@ const AuthProvider: React.FC = ({ children }) => {
 				firebase
 					.auth()
 					.signInWithPopup(new firebase.auth.GithubAuthProvider())
-					.then((res) => setUser(res.user)),
+					.then((res) => handlUser(res.user)),
 			signout: () =>
 				firebase
 					.auth()

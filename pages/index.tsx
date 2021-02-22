@@ -5,27 +5,23 @@ import styles from '../styles/Home.module.css';
 export default function Home() {
 	const { user, signinWithGithub, signout } = useAuth();
 
-	console.log(user);
-
 	return (
 		<div className={styles.container}>
 			<Head>
-				<title>Create Next App</title>
+				<title>Fast Feedback</title>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 
 			<main className={styles.main}>
-				<h1 className={styles.title}>
-					Welcome to <a href='https://nextjs.org'>Next.js!</a>
-				</h1>
+				<h1 className={styles.title}>Welcome to Fast Feedback</h1>
 
-				<p className={styles.description}>
-					{!user ? (
-						<button onClick={signinWithGithub}>Sign in with Github</button>
-					) : (
-						<button onClick={signout}>Sign out</button>
-					)}
-				</p>
+				{user && <p>{user.email}</p>}
+
+				{!user ? (
+					<button onClick={signinWithGithub}>Sign in with Github</button>
+				) : (
+					<button onClick={signout}>Sign out</button>
+				)}
 			</main>
 		</div>
 	);
