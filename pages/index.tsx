@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { Button, Heading } from '@chakra-ui/react';
-import { useAuth } from '../lib/auth';
+
+import { useAuth } from '@/lib/auth';
 
 export default function Home() {
 	const { user, signinWithGithub, signout } = useAuth();

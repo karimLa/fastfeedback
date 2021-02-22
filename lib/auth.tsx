@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { createUser } from './db';
-import firebase from './firebase';
+
+import { createUser } from '@/lib/db';
+import firebase from '@/lib/firebase';
 
 export interface IUser {
 	uid: string;
