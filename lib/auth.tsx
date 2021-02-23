@@ -8,6 +8,7 @@ export interface IUser {
 	username: string;
 	email: string;
 	photoUrl: string;
+	token: string;
 }
 
 interface Context {
@@ -17,12 +18,14 @@ interface Context {
 	signout: () => Promise<void>;
 }
 
-function formatUser(user: firebase.User): IUser {
+async function formatUser(user: firebase.User): Promise<IUser> {
+	const token = await user.getIdToken();
 	return {
 		uid: user.uid,
 		email: user.email,
 		username: user.displayName,
 		photoUrl: user.photoURL,
+		token,
 	};
 }
 
@@ -44,7 +47,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
 	const handlUser = async (rawUser: firebase.User | undefined) => {
 		if (rawUser) {
-			const user = formatUser(rawUser);
+			const user = await formatUser(rawUser);
 			await createUser(user.uid, user);
 
 			setUser(user);
