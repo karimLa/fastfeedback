@@ -20,13 +20,13 @@ import { useAuth } from '@/lib/auth';
 
 const AddSiteModal = ({ children }) => {
 	const toast = useToast();
-	const auth = useAuth();
+	const { user } = useAuth();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { handleSubmit, register } = useForm();
 
 	const onCreateSite = ({ name, url }) => {
 		const newSite = {
-			authorId: auth.user.uid,
+			authorId: user.uid,
 			createdAt: new Date().toISOString(),
 			name,
 			url,

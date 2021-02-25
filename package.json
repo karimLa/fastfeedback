@@ -12,6 +12,7 @@
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "firebase": "^8.2.9",
+    "firebase-admin": "^9.5.0",
     "framer-motion": "^3.6.7",
     "next": "10.0.7",
     "react": "17.0.1",
