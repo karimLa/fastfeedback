@@ -20,8 +20,10 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
+      "@/styles/*": ["styles/*"],
       "@/lib/*": ["lib/*"],
-      "@/styles/*": ["styles/*"]
+      "@/utils/*": ["utils/*"],
+      "@/interfaces/*": ["interfaces/*"]
     }
   },
   "include": [

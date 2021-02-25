@@ -2,14 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { createUser } from '@/lib/db';
 import firebase from '@/lib/firebase';
-
-export interface IUser {
-	uid: string;
-	username: string;
-	email: string;
-	photoUrl: string;
-	token: string;
-}
+import IUser from '@/interfaces/user';
 
 interface Context {
 	user: IUser | undefined;

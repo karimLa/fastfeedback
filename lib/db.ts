@@ -1,5 +1,5 @@
-import { IUser } from './auth'
-import firebase from './firebase'
+import IUser from '@/interfaces/user';
+import firebase from '@/lib/firebase'
 
 const firestore = firebase.firestore()
 
