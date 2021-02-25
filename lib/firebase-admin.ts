@@ -1,6 +1,5 @@
 import admin from 'firebase-admin';
 
-
 if (!admin.apps.length) {
 	admin.initializeApp({
 		credential: admin.credential.cert({
@@ -11,4 +10,4 @@ if (!admin.apps.length) {
 	});
 }
 
-export default admin;
+export default admin.firestore();
