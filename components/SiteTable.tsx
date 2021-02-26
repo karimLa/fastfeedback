@@ -12,7 +12,7 @@ interface Props {
 
 const SiteTable: FC<Props> = ({ sites }) => {
 	return (
-		<Table>
+		<Table w='full'>
 			<thead>
 				<Tr>
 					<Th>Name</Th>

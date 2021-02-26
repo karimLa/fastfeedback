@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { mutate } from 'swr';
 import {
 	Modal,
 	ModalOverlay,
@@ -40,6 +41,11 @@ const AddSiteModal = ({ children }) => {
 			duration: 5000,
 			isClosable: true,
 		});
+		mutate(
+			'/api/sites',
+			(data) => ({ sites: [...data.sites, newSite] }),
+			false
+		);
 		onClose();
 	};
 
