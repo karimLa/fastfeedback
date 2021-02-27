@@ -1,15 +1,65 @@
+import { FormEvent, useRef, useState } from 'react';
 import { GetStaticPropsContext } from 'next';
+import { useRouter } from 'next/router';
+import {
+	Box,
+	Button,
+	Flex,
+	FormControl,
+	FormLabel,
+	Input,
+} from '@chakra-ui/react';
 
 import { getAllFeedback, getAllSites } from '@/lib/db-admin';
-import IFeedback from '@/interfaces/feeback';
 import Feedback from '@/components/Feedback';
+import IFeedback from '@/interfaces/feeback';
+import { useAuth } from '@/lib/auth';
+import { createFeedback } from '@/lib/db';
 
 interface Props {
-	feedback: IFeedback[];
+	feedback: IFeedback[] | null;
 }
 
 export default function SiteFeedback({ feedback }: Props) {
-	return feedback.map((item) => <Feedback key={item.id} feedback={item} />);
+	const { user } = useAuth();
+	const router = useRouter();
+	const inputRef = useRef<HTMLInputElement | null>(null);
+	const [AllFeedback, setAllFeedback] = useState(feedback || []);
+
+	const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
+		const newFeedback: IFeedback = {
+			author: user?.username!,
+			authorId: user?.uid!,
+			siteId: router.query.siteId as string,
+			text: inputRef.current?.value ?? '',
+			createdAt: new Date().toISOString(),
+			provider: user?.provider!,
+			status: 'pending',
+		};
+
+		setAllFeedback([newFeedback, ...AllFeedback]);
+		createFeedback(newFeedback);
+	};
+
+	return (
+		<Flex direction='column' w='full' maxW='700px' m='0 auto'>
+			{/* @ts-ignore */}
+			<Box as='form' onSubmit={onSubmit}>
+				<FormControl my='8'>
+					<FormLabel htmlFor='comment'>Comment</FormLabel>
+					<Input ref={inputRef} type='text' id='comment' />
+					<Button type='submit' mt='2' fontWeight='medium'>
+						Add Comment
+					</Button>
+				</FormControl>
+			</Box>
+			{AllFeedback.map((item) => (
+				<Feedback key={item.id} feedback={item} />
+			))}
+		</Flex>
+	);
 }
 
 export async function getStaticProps({ params }: GetStaticPropsContext) {
@@ -20,7 +70,7 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 		siteId = siteId[siteId.length - 1];
 	}
 
-	const feedback = await getAllFeedback(siteId);
+	const { feedback } = await getAllFeedback(siteId);
 
 	return {
 		props: {
@@ -30,9 +80,9 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 }
 
 export async function getStaticPaths() {
-	const sites = await getAllSites();
-	const paths = sites.map((site) => ({
-		params: { siteId: site.id.toString() },
+	const { sites } = await getAllSites();
+	const paths = sites?.map((site) => ({
+		params: { siteId: site.id!.toString() },
 	}));
 
 	return {

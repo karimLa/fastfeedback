@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { mutate } from 'swr';
 import {
@@ -18,16 +19,17 @@ import {
 
 import { createSite } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
+import ISite from '@/interfaces/site';
 
-const AddSiteModal = ({ children }) => {
+const AddSiteModal: FC = ({ children }) => {
 	const toast = useToast();
 	const { user } = useAuth();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { handleSubmit, register } = useForm();
 
-	const onCreateSite = ({ name, url }) => {
-		const newSite = {
-			authorId: user.uid,
+	const onCreateSite = ({ name, url }: { name: string; url: string }) => {
+		const newSite: ISite = {
+			authorId: user?.uid!,
 			createdAt: new Date().toISOString(),
 			name,
 			url,
@@ -43,7 +45,7 @@ const AddSiteModal = ({ children }) => {
 		});
 		mutate(
 			'/api/sites',
-			(data) => ({ sites: [...data.sites, newSite] }),
+			(data: any) => ({ sites: [...data.sites, newSite] }),
 			false
 		);
 		onClose();

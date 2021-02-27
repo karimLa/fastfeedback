@@ -10,7 +10,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		siteId = siteId[siteId.length - 1]
 	}
 
-	const feedback = await getAllFeedback(siteId)
+	const { feedback, error } = await getAllFeedback(siteId)
+
+	if (error) {
+		return res.status(500).json({ error })
+	}
 
 	res.status(200).json({ feedback })
 }
