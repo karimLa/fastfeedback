@@ -1,5 +1,5 @@
 import { FormEvent, useRef, useState } from 'react';
-import { GetStaticPropsContext } from 'next';
+import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { useRouter } from 'next/router';
 import {
 	Box,
@@ -79,14 +79,20 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 	};
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
 	const { sites } = await getAllSites();
-	const paths = sites?.map((site) => ({
-		params: { siteId: site.id!.toString() },
-	}));
+	let paths: any = [];
+
+	if (sites) {
+		paths = sites.map((site) => ({
+			params: { siteId: site.id!.toString() },
+		}));
+	} else {
+		paths = null;
+	}
 
 	return {
 		paths,
 		fallback: false,
 	};
-}
+};
