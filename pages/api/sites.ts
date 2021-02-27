@@ -1,18 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
-import db from '@/lib/firebase-admin';
+import { getAllSites } from "@/lib/db-admin";
 
 export default async (_: NextApiRequest, res: NextApiResponse) => {
-  const snapshot = await db.collection('sites').get()
-  const data = []
+  const sites = await getAllSites()
 
-  if (snapshot.empty) {
-    return res.status(200).json({ sites: data })
-  }
-
-  snapshot.forEach(doc => {
-    data.push({ id: doc.id, ...doc.data() })
-  })
-
-  res.status(200).json({ sites: data })
+  res.status(200).json({ sites })
 }
