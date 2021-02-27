@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import Link from 'next/link';
 import {
 	Button,
@@ -10,7 +11,7 @@ import {
 import { useAuth } from '@/lib/auth';
 import Logo from '@/components/Logo';
 
-const DashboardShell = ({ children }) => {
+const DashboardShell: FC = ({ children }) => {
 	const { user, signout } = useAuth();
 
 	return (
