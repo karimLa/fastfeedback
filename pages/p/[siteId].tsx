@@ -56,7 +56,7 @@ export default function SiteFeedback({ feedback }: Props) {
 				</FormControl>
 			</Box>
 			{AllFeedback.map((item) => (
-				<Feedback key={item.id} feedback={item} />
+				<Feedback key={item.createdAt + item.siteId} feedback={item} />
 			))}
 		</Flex>
 	);
@@ -87,8 +87,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		paths = sites.map((site) => ({
 			params: { siteId: site.id!.toString() },
 		}));
-	} else {
-		paths = null;
 	}
 
 	return {
