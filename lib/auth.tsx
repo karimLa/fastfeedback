@@ -5,7 +5,7 @@ import firebase from '@/lib/firebase';
 import IUser from '@/interfaces/user';
 
 interface Context {
-	user: IUser | undefined;
+	user: IUser | null;
 	loading: boolean;
 	signinWithGithub: () => Promise<void>;
 	signout: () => Promise<void>;
@@ -13,13 +13,16 @@ interface Context {
 
 async function formatUser(user: firebase.User): Promise<IUser> {
 	const token = await user.getIdToken();
-	return {
+	const formattedUser: IUser = {
 		uid: user.uid,
-		email: user.email,
-		username: user.displayName,
-		photoUrl: user.photoURL,
-		token,
+		email: user.email!,
+		username: user.displayName!,
+		photoUrl: user.photoURL!,
+		token, // @ts-ignore
+		provider: user.providerData[0].providerId,
 	};
+
+	return formattedUser;
 }
 
 const AuthContext = createContext<Context | undefined>(undefined);
@@ -35,10 +38,10 @@ export function useAuth() {
 }
 
 const AuthProvider: React.FC = ({ children }) => {
-	const [user, setUser] = useState<IUser | undefined>(undefined);
+	const [user, setUser] = useState<IUser | null>(null);
 	const [loading, setLoading] = useState(true);
 
-	const handlUser = async (rawUser: firebase.User | undefined) => {
+	const handlUser = async (rawUser: firebase.User | null) => {
 		if (rawUser) {
 			const user = await formatUser(rawUser);
 			await createUser(user.uid, user);
@@ -47,7 +50,7 @@ const AuthProvider: React.FC = ({ children }) => {
 			setLoading(false);
 		} else {
 			setLoading(false);
-			setUser(undefined);
+			setUser(null);
 		}
 	};
 
@@ -55,7 +58,7 @@ const AuthProvider: React.FC = ({ children }) => {
 		const unsubscribe = firebase.auth().onAuthStateChanged(handlUser);
 
 		return () => unsubscribe();
-	});
+	}, []);
 
 	const value = useMemo(
 		() => ({
@@ -70,7 +73,7 @@ const AuthProvider: React.FC = ({ children }) => {
 				firebase
 					.auth()
 					.signOut()
-					.then(() => setUser(undefined)),
+					.then(() => setUser(null)),
 		}),
 		[user, loading]
 	);

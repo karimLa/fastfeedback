@@ -1,5 +1,5 @@
 export default interface ISite {
-	id: string
+	id?: string
 	authorId: string
 	name: string
 	url: string

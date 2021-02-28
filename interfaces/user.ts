@@ -4,4 +4,5 @@ export default interface IUser {
 	email: string;
 	photoUrl: string;
 	token: string;
+	provider: string
 }

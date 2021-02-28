@@ -8,7 +8,7 @@ import SiteTable from '@/components/SiteTable';
 import AddSiteModal from '@/components/AddSiteModal';
 import fetcher from '@/utils/fetcher';
 
-const Dashboard = () => {
+export default function Dashboard() {
 	const { data } = useSWR('/api/sites', fetcher);
 
 	if (!data) {
@@ -34,6 +34,4 @@ const Dashboard = () => {
 			)}
 		</DashboardShell>
 	);
-};
-
-export default Dashboard;
+}

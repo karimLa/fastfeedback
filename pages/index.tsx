@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth';
 import Logo from '@/components/Logo';
 
 export default function Home() {
-	const { user, signinWithGithub, signout } = useAuth();
+	const { user, signinWithGithub } = useAuth();
 
 	return (
 		<>
