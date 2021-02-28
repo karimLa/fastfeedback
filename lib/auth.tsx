@@ -58,7 +58,7 @@ const AuthProvider: React.FC = ({ children }) => {
 		const unsubscribe = firebase.auth().onAuthStateChanged(handlUser);
 
 		return () => unsubscribe();
-	});
+	}, []);
 
 	const value = useMemo(
 		() => ({
