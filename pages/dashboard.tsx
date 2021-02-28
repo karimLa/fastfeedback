@@ -7,9 +7,11 @@ import SiteTableSkeleton from '@/components/SiteTableSkeleton';
 import SiteTable from '@/components/SiteTable';
 import AddSiteModal from '@/components/AddSiteModal';
 import fetcher from '@/utils/fetcher';
+import { useAuth } from '@/lib/auth';
 
 export default function Dashboard() {
-	const { data } = useSWR('/api/sites', fetcher);
+	const { user } = useAuth();
+	const { data } = useSWR(user ? ['/api/sites', user.token] : null, fetcher);
 
 	if (!data) {
 		return (
@@ -21,7 +23,7 @@ export default function Dashboard() {
 
 	return (
 		<DashboardShell>
-			{data?.sites.length ? (
+			{data?.sites?.length ? (
 				<>
 					<Flex justify='space-between' mb='4'>
 						<Heading>My Sites</Heading>

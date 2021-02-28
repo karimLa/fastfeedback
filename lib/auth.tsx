@@ -12,7 +12,7 @@ interface Context {
 }
 
 async function formatUser(user: firebase.User): Promise<IUser> {
-	const token = await user.getIdToken();
+	const { token } = await user.getIdTokenResult();
 	const formattedUser: IUser = {
 		uid: user.uid,
 		email: user.email!,
@@ -44,7 +44,7 @@ const AuthProvider: React.FC = ({ children }) => {
 	const handlUser = async (rawUser: firebase.User | null) => {
 		if (rawUser) {
 			const user = await formatUser(rawUser);
-			await createUser(user.uid, user);
+			await createUser(user);
 
 			setUser(user);
 			setLoading(false);

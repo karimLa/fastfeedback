@@ -44,7 +44,7 @@ const AddSiteModal: FC = ({ children }) => {
 			isClosable: true,
 		});
 		mutate(
-			'/api/sites',
+			['/api/sites', user?.token],
 			(data: any) => ({ sites: [...data.sites, newSite] }),
 			false
 		);
