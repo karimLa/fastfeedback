@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import cookie from 'js-cookie';
 
 import { createUser } from '@/lib/db';
 import firebase from '@/lib/firebase';
@@ -45,12 +46,15 @@ const AuthProvider: React.FC = ({ children }) => {
 		if (rawUser) {
 			const user = await formatUser(rawUser);
 			await createUser(user);
-
 			setUser(user);
 			setLoading(false);
+
+			cookie.set('fast-feedback-auth', 'true', { expires: 1 });
 		} else {
 			setLoading(false);
 			setUser(null);
+
+			cookie.remove('fast-feedback-auth');
 		}
 	};
 
