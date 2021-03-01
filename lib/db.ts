@@ -5,8 +5,9 @@ import firebase from '@/lib/firebase'
 
 const firestore = firebase.firestore()
 
-export function createUser(uid: string, data: IUser) {
-	return firestore.collection('users').doc(uid).set(data, { merge: true })
+export function createUser(data: IUser) {
+	const { token, ...userWithoutToken } = data
+	return firestore.collection('users').doc(data.uid).set(userWithoutToken, { merge: true })
 }
 
 export function createSite(data: ISite) {

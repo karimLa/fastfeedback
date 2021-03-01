@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import cookie from 'js-cookie';
 
 import { createUser } from '@/lib/db';
 import firebase from '@/lib/firebase';
@@ -12,7 +13,7 @@ interface Context {
 }
 
 async function formatUser(user: firebase.User): Promise<IUser> {
-	const token = await user.getIdToken();
+	const { token } = await user.getIdTokenResult();
 	const formattedUser: IUser = {
 		uid: user.uid,
 		email: user.email!,
@@ -44,13 +45,16 @@ const AuthProvider: React.FC = ({ children }) => {
 	const handlUser = async (rawUser: firebase.User | null) => {
 		if (rawUser) {
 			const user = await formatUser(rawUser);
-			await createUser(user.uid, user);
-
+			await createUser(user);
 			setUser(user);
 			setLoading(false);
+
+			cookie.set('fast-feedback-auth', 'true', { expires: 1 });
 		} else {
 			setLoading(false);
 			setUser(null);
+
+			cookie.remove('fast-feedback-auth');
 		}
 	};
 
