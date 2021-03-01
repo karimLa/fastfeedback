@@ -17,14 +17,14 @@ import { useAuth } from '@/lib/auth';
 import { createFeedback } from '@/lib/db';
 
 interface Props {
-	feedback: IFeedback[] | null;
+	feedback: IFeedback[];
 }
 
 export default function SiteFeedback({ feedback }: Props) {
 	const { user } = useAuth();
 	const router = useRouter();
 	const inputRef = useRef<HTMLInputElement | null>(null);
-	const [AllFeedback, setAllFeedback] = useState(feedback || []);
+	const [AllFeedback, setAllFeedback] = useState(feedback);
 
 	const onSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -70,24 +70,20 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 		siteId = siteId[siteId.length - 1];
 	}
 
-	const { feedback } = await getAllFeedback(siteId);
+	const feedback = await getAllFeedback(siteId);
 
 	return {
-		props: {
-			feedback,
-		},
+		props: feedback,
+		revalidate: 1,
 	};
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	const { sites } = await getAllSites();
-	let paths: any = [];
 
-	if (sites) {
-		paths = sites.map((site) => ({
-			params: { siteId: site.id!.toString() },
-		}));
-	}
+	const paths = sites.map((site) => ({
+		params: { siteId: site.id!.toString() },
+	}));
 
 	return {
 		paths,
